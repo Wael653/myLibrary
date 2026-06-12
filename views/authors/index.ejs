@@ -1,4 +1,7 @@
 <h2>Search Authors</h2>
+<% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+    <p class="error"><%= errorMessage %></p>
+<% } %>
 <form action="/authors" method="GET">
     <label>Name</label>
     <input type="text" name="name" placeholder="Author Name" value="<%= searchOptions.name %>">
@@ -9,4 +12,7 @@
     <div>
         <h3><%= author.name %></h3>
     </div>
+    <a href="/authors/<%= author.id %>">View</a>
+    <a href="/authors/<%= author.id %>/edit">Edit</a>
+    <%- include('../partials/deleteForm', { url: `/authors/${author.id}` }) %>
 <% }); %>       
