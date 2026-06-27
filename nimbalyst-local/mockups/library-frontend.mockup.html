@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>myLibrary — Frontend Mockup</title>
+<style>
+  :root {
+    --bg:        #f6f1e7;   /* warm cream page */
+    --surface:   #ffffff;   /* cards */
+    --ink:       #23201b;   /* primary text */
+    --muted:     #7a7264;   /* secondary text */
+    --primary:   #2f5d50;   /* deep forest green */
+    --primary-2: #3d7766;
+    --accent:    #c9743a;   /* warm spine orange */
+    --line:      #e6ddcd;   /* borders */
+    --danger:    #b3422f;
+    --radius:    12px;
+    --shadow:    0 6px 22px rgba(35,32,27,.08);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- shared ---------- */
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  h1,h2,h3 { font-family: var(--serif); font-weight: 600; margin: 0; }
+  a { color: inherit; text-decoration: none; }
+
+  .navbar {
+    background: var(--primary); color: #fff;
+    box-shadow: var(--shadow);
+  }
+  .navbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { font-family: var(--serif); font-size: 22px; letter-spacing: .3px; display:flex; align-items:center; gap:10px; }
+  .brand .glyph { width:28px;height:28px;border-radius:7px;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:15px; }
+  .nav-links { display: flex; gap: 4px; align-items:center; }
+  .nav-links a { padding: 8px 14px; border-radius: 8px; font-size: 14px; color: #e9f0ec; opacity:.9; }
+  .nav-links a:hover { background: rgba(255,255,255,.12); opacity:1; }
+  .nav-links a.cta { background: var(--accent); color:#fff; font-weight:600; opacity:1; }
+  .nav-links a.cta:hover { background:#b5662f; }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer;
+    font-size:14px; font-weight:600; padding:10px 18px; border-radius:9px; font-family:var(--sans); }
+  .btn-primary { background:var(--primary); color:#fff; }
+  .btn-primary:hover { background:var(--primary-2); }
+  .btn-accent { background:var(--accent); color:#fff; }
+  .btn-ghost { background:transparent; color:var(--primary); border:1px solid var(--line); }
+  .btn-danger { background:transparent; color:var(--danger); border:1px solid #e7c6bf; }
+
+  .section-head { display:flex; align-items:baseline; justify-content:space-between; margin: 34px 0 18px; }
+  .section-head h2 { font-size: 26px; }
+  .section-head .muted { color:var(--muted); font-size:14px; }
+
+  /* book cover block (stand-in for real cover image) */
+  .cover { border-radius: 8px; box-shadow: 0 4px 14px rgba(35,32,27,.18);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:12px; color:#fff;
+    background: linear-gradient(160deg,#3d7766,#2f5d50); position:relative; overflow:hidden; }
+  .cover::before { content:""; position:absolute; left:0; top:0; bottom:0; width:8px; background:rgba(0,0,0,.18); }
+  .cover .c-title { font-family:var(--serif); font-size:14px; line-height:1.2; }
+  .cover .c-auth { font-size:11px; opacity:.85; margin-top:3px; }
+  .cover.v2 { background:linear-gradient(160deg,#9c5a3c,#7c3f28); }
+  .cover.v3 { background:linear-gradient(160deg,#4a4e8c,#33356a); }
+  .cover.v4 { background:linear-gradient(160deg,#8a6d2f,#5f4a1f); }
+  .cover.v5 { background:linear-gradient(160deg,#54707a,#33474f); }
+  .cover.v6 { background:linear-gradient(160deg,#7a3550,#552038); }
+
+  /* ---------- screen frame ---------- */
+  .screen { background:var(--bg); border:1px solid var(--line); border-radius:16px;
+    box-shadow:var(--shadow); overflow:hidden; margin: 0 0 56px; }
+  .screen-label { font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); margin: 40px 0 12px; }
+  .screen-body { padding-bottom: 40px; }
+
+  /* ---------- HOME ---------- */
+  .hero { background: linear-gradient(180deg,#2f5d50,#27514628 90%, transparent); padding: 0; }
+  .hero-inner { padding: 44px 0 36px; }
+  .hero h2 { font-size: 38px; color:#fff; max-width: 560px; }
+  .hero p { color:#dfeae4; max-width: 520px; margin-top:12px; font-size:16px; }
+  .hero .actions { margin-top:22px; display:flex; gap:12px; }
+  .hero .btn-ghost { color:#fff; border-color:rgba(255,255,255,.4); }
+
+  .grid-books { display:grid; grid-template-columns: repeat(6,1fr); gap:20px; }
+  .book-card .cover { height: 200px; }
+  .book-card .b-title { font-family:var(--serif); font-size:14px; margin-top:10px; }
+  .book-card .b-auth { font-size:12px; color:var(--muted); }
+
+  /* ---------- BOOKS INDEX (search) ---------- */
+  .filter-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); display:grid; grid-template-columns: 2fr 1fr 1fr auto; gap:14px; align-items:end; }
+  .field label { display:block; font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; }
+  .field input, .field select { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:9px;
+    font-size:14px; font-family:var(--sans); background:#fff; color:var(--ink); }
+  .field input:focus, .field select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(47,93,80,.12); }
+
+  .list-row { display:grid; grid-template-columns: 64px 1fr auto; gap:18px; align-items:center;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 18px; margin-bottom:12px; }
+  .list-row .cover { height:88px; width:62px; }
+  .list-row .cover .c-title { display:none; }
+  .lr-title { font-family:var(--serif); font-size:18px; }
+  .lr-meta { font-size:13px; color:var(--muted); margin-top:3px; display:flex; gap:14px; flex-wrap:wrap; }
+  .lr-meta b { color:var(--ink); font-weight:600; }
+
+  /* ---------- BOOK DETAIL ---------- */
+  .detail { display:grid; grid-template-columns: 280px 1fr; gap:40px; }
+  .detail .cover { height: 400px; }
+  .detail .cover .c-title { font-size:20px; }
+  .pill { display:inline-block; background:#ece3d2; color:#6a5d44; font-size:12px; font-weight:600;
+    padding:4px 11px; border-radius:999px; }
+  .kv { display:grid; grid-template-columns: 130px 1fr; gap:8px 16px; margin: 20px 0; font-size:14px; }
+  .kv dt { color:var(--muted); }
+  .kv dd { margin:0; font-weight:600; }
+  .detail h2 { font-size:32px; margin-bottom:6px; }
+  .detail .by { color:var(--accent); font-weight:600; font-size:16px; margin-bottom:18px; }
+  .desc { color:#3c3730; font-size:15px; line-height:1.7; max-width:560px; }
+  .detail-actions { margin-top:26px; display:flex; gap:12px; }
+
+  /* ---------- FORM ---------- */
+  .form-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:28px; display:grid; grid-template-columns: 1fr 260px; gap:32px; }
+  .form-grid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-card textarea { width:100%; min-height:120px; padding:10px 12px; border:1px solid var(--line);
+    border-radius:9px; font-family:var(--sans); font-size:14px; resize:vertical; }
+  .dropzone { border:2px dashed var(--line); border-radius:12px; background:#fbf8f1; height:300px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--muted); }
+  .dropzone .ic { width:54px;height:54px;border-radius:12px;background:#ece3d2;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px; }
+  .form-actions { grid-column:1 / -1; display:flex; justify-content:flex-end; gap:12px; border-top:1px solid var(--line); padding-top:20px; }
+
+  .flash { background:#fbe7e2; border:1px solid #efc6bd; color:var(--danger); padding:12px 16px;
+    border-radius:10px; font-size:14px; margin-bottom:18px; display:flex; gap:8px; align-items:center; }
+
+  .note { font-family:var(--sans); font-size:13px; color:var(--muted); background:#fff;
+    border:1px dashed var(--line); border-radius:10px; padding:12px 16px; margin:8px 0 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap" style="padding-top:28px;">
+  <h1 style="font-size:28px;">myLibrary — Frontend Mockup</h1>
+  <p style="color:var(--muted); max-width:640px;">Proposed visual design for the existing Express/EJS app. Four key screens below: Home, Books (with search), Book detail, and the Add/Edit Book form. Same data &amp; routes — just a styled frontend.</p>
+</div>
+
+<!-- ============ HOME ============ -->
+<div class="wrap"><div class="screen-label">1 · Home page  ·  GET /</div></div>
+<div class="wrap"><div class="screen">
+  <div class="navbar"><div class="wrap">
+    <a class="brand"><span class="glyph">📖</span> myLibrary</a>
+    <nav class="nav-links">
+      <a href="#">Authors</a>
+      <a href="#">Books</a>
+      <a class="cta" href="#">+ Add Book</a>
+    </nav>
+  </div></div>
+
+  <div class="hero"><div class="wrap"><div class="hero-inner">
+    <h2>Your personal book collection, beautifully organized.</h2>
+    <p>Browse the catalog, track authors, and add new titles with cover art.</p>
+    <div class="actions">
+      <button class="btn btn-accent">Browse the catalog</button>
+      <button class="btn btn-ghost">+ Add a book</button>
+    </div>
+  </div></div></div>
+
+  <div class="screen-body"><div class="wrap">
+    <div class="section-head">
+      <h2>Recently Added</h2>
+      <span class="muted">View all →</span>
+    </div>
+    <div class="grid-books">
+      <div class="book-card"><div class="cover">  <div class="c-title">The Silent Tide</div></div><div class="b-title">The Silent Tide</div><div class="b-auth">Marina Vos</div></div>
+      <div class="book-card"><div class="cover v2"><div class="c-title">Ironwood</div></div><div class="b-title">Ironwood</div><div class="b-auth">J. Halloran</div></div>
+      <div class="book-card"><div class="cover v3"><div class="c-title">Blue Hours</div></div><div class="b-title">Blue Hours</div><div class="b-auth">A. Okafor</div></div>
+      <div class="book-card"><div class="cover v4"><div class="c-title">The Cartographer</div></div><div class="b-title">The Cartographer</div><div class="b-auth">L. Renner</div></div>
+      <div class="book-card"><div class="cover v5"><div class="c-title">Salt &amp; Stone</div></div><div class="b-title">Salt &amp; Stone</div><div class="b-auth">P. Eklund</div></div>
+      <div class="book-card"><div class="cover v6"><div class="c-title">Nightfall Garden</div></div><div class="b-title">Nightfall Garden</div><div class="b-auth">R. Castellano</div></div>
+    </div>
+  </div></div>
+</div></div>
+
+<!-- ============ BOOKS INDEX ============ -->
+<div class="wrap"><div class="screen-label">2 · Books listing + search  ·  GET /books</div></div>
+<div class="wrap"><div class="screen">
+  <div class="navbar"><div class="wrap">
+    <a class="brand"><span class="glyph">📖</span> myLibrary</a>
+    <nav class="nav-links">
+      <a href="#">Authors</a>
+      <a href="#" style="background:rgba(255,255,255,.12);opacity:1;">Books</a>
+      <a class="cta" href="#">+ Add Book</a>
+    </nav>
+  </div></div>
+
+  <div class="screen-body"><div class="wrap">
+    <div class="section-head">
+      <h2>All Books</h2>
+      <span class="muted">42 titles</span>
+    </div>
+
+    <form class="filter-card">
+      <div class="field"><label>Title</label><input type="text" placeholder="Search by title…" value="" /></div>
+      <div class="field"><label>Published after</label><input type="date" /></div>
+      <div class="field"><label>Published before</label><input type="date" /></div>
+      <div class="field"><button type="submit" class="btn btn-primary">Search</button></div>
+    </form>
+
+    <div style="height:22px;"></div>
+
+    <div class="list-row">
+      <div class="cover"></div>
+      <div><div class="lr-title">The Silent Tide</div>
+        <div class="lr-meta"><span>by <b>Marina Vos</b></span><span>Published <b>2021</b></span><span><b>328</b> pages</span></div></div>
+      <a href="#" class="btn btn-ghost">View →</a>
+    </div>
+    <div class="list-row">
+      <div class="cover v2"></div>
+      <div><div class="lr-title">Ironwood</div>
+        <div class="lr-meta"><span>by <b>J. Halloran</b></span><span>Published <b>2019</b></span><span><b>512</b> pages</span></div></div>
+      <a href="#" class="btn btn-ghost">View →</a>
+    </div>
+    <div class="list-row">
+      <div class="cover v3"></div>
+      <div><div class="lr-title">Blue Hours</div>
+        <div class="lr-meta"><span>by <b>A. Okafor</b></span><span>Published <b>2023</b></span><span><b>240</b> pages</span></div></div>
+      <a href="#" class="btn btn-ghost">View →</a>
+    </div>
+    <div class="list-row">
+      <div class="cover v4"></div>
+      <div><div class="lr-title">The Cartographer</div>
+        <div class="lr-meta"><span>by <b>L. Renner</b></span><span>Published <b>2018</b></span><span><b>401</b> pages</span></div></div>
+      <a href="#" class="btn btn-ghost">View →</a>
+    </div>
+
+    <p class="note">💡 Could also offer a grid/list toggle — the home page uses a cover grid, this list view shows more metadata per row.</p>
+  </div></div>
+</div></div>
+
+<!-- ============ BOOK DETAIL ============ -->
+<div class="wrap"><div class="screen-label">3 · Book detail  ·  GET /books/:id</div></div>
+<div class="wrap"><div class="screen">
+  <div class="navbar"><div class="wrap">
+    <a class="brand"><span class="glyph">📖</span> myLibrary</a>
+    <nav class="nav-links">
+      <a href="#">Authors</a><a href="#">Books</a><a class="cta" href="#">+ Add Book</a>
+    </nav>
+  </div></div>
+
+  <div class="screen-body"><div class="wrap" style="padding-top:34px;">
+    <a href="#" style="color:var(--muted);font-size:14px;">← Back to books</a>
+    <div style="height:18px;"></div>
+    <div class="detail">
+      <div class="cover"><div class="c-title">The Silent Tide</div><div class="c-auth">Marina Vos</div></div>
+      <div>
+        <span class="pill">Fiction</span>
+        <h2>The Silent Tide</h2>
+        <div class="by">by Marina Vos</div>
+        <dl class="kv">
+          <dt>Published</dt><dd>March 14, 2021</dd>
+          <dt>Pages</dt><dd>328</dd>
+          <dt>Added to library</dt><dd>June 2, 2026</dd>
+        </dl>
+        <p class="desc">A sweeping debut about a coastal town and the secrets the tide keeps. When the lighthouse keeper vanishes, his daughter must piece together a history written in letters, weather logs, and the silences between them.</p>
+        <div class="detail-actions">
+          <button class="btn btn-primary">✎ Edit</button>
+          <button class="btn btn-danger">🗑 Remove</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</div></div>
+
+<!-- ============ FORM ============ -->
+<div class="wrap"><div class="screen-label">4 · Add / Edit Book form  ·  GET /books/new · /books/:id/edit</div></div>
+<div class="wrap"><div class="screen">
+  <div class="navbar"><div class="wrap">
+    <a class="brand"><span class="glyph">📖</span> myLibrary</a>
+    <nav class="nav-links">
+      <a href="#">Authors</a><a href="#">Books</a><a class="cta" style="opacity:1;" href="#">+ Add Book</a>
+    </nav>
+  </div></div>
+
+  <div class="screen-body"><div class="wrap" style="padding-top:34px;">
+    <div class="section-head" style="margin-top:0;"><h2>Add New Book</h2></div>
+
+    <div class="flash">⚠ Error creating book — please check the required fields.</div>
+
+    <form class="form-card">
+      <div>
+        <div class="form-grid">
+          <div class="field full"><label>Title *</label><input type="text" placeholder="Book title" /></div>
+          <div class="field"><label>Author *</label>
+            <select><option>Choose an author…</option><option>Marina Vos</option><option>J. Halloran</option></select>
+          </div>
+          <div class="field"><label>Publish date *</label><input type="date" /></div>
+          <div class="field"><label>Page count *</label><input type="number" placeholder="e.g. 328" /></div>
+          <div class="field full"><label>Description</label><textarea placeholder="A short summary of the book…"></textarea></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Cover image *</label>
+        <div class="dropzone">
+          <div class="ic">⬆</div>
+          <div style="font-weight:600;color:var(--ink);">Drag &amp; drop cover</div>
+          <div style="font-size:13px;margin-top:4px;">or click to browse · JPG / PNG</div>
+          <div style="font-size:12px;margin-top:10px;opacity:.8;">FilePond — image preview &amp; resize</div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-ghost">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Book</button>
+      </div>
+    </form>
+  </div></div>
+</div></div>
+
+<div class="wrap" style="padding-bottom:50px;"></div>
+
+</body>
+</html>
