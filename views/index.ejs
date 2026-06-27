@@ -1,6 +1,12 @@
-<div>Recently Added Books</div>
+<% if (books.length > 0) { %>
+    <div>Recently Added Books</div>
+<% } else { %>
+    <div>No books available</div>
+<% } %>
 <div>
 <% books.forEach(book => { %>
-    <img height="150" width="100" src="<%= book.coverImagePath %>">
+    <a href="/books/<%= book.id %>">
+        <img height="150" width="100" src="<%= book.coverImagePath %>">
+    </a>
 <% }); %>     
 </div>  

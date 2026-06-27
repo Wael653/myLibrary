@@ -3,6 +3,15 @@ const router = express.Router();
 const Author = require("../models/author");
 const Book = require("../models/book");
 
+async function renderShowAuthor(res, author, errorMessage = null) {
+  const booksByAuthor = await Book.find({ author: author.id }).limit(6).exec();
+  const renderOptions = { author: author, booksByAuthor: booksByAuthor };
+  if (errorMessage) {
+    renderOptions.errorMessage = errorMessage;
+  }
+  res.render("authors/show", renderOptions);
+}
+
 /* GET authors listing. */
 router.get("/", async (req, res) => {
   const searchOptions = {};
@@ -26,8 +35,10 @@ router.get("/new", (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const author = await Author.findById(req.params.id);
-    const booksByAuthor = await Book.find({ author: author.id }).limit(6).exec();
-    res.render("authors/show", { author: author, booksByAuthor: booksByAuthor });
+    if (author == null) {
+      return res.redirect("/authors");
+    }
+    await renderShowAuthor(res, author);
   } catch (error) {
     console.error(error);
     res.redirect("/authors");
@@ -78,7 +89,12 @@ router.delete("/:id", async (req, res) => {
     if (author == null) {
       return res.redirect("/authors");
     }
-    res.redirect(`/authors/${author.id}`);
+    try {
+      await renderShowAuthor(res, author, error.message || "Could not remove author");
+    } catch (err) {
+      console.error("Error rendering author show after delete failure:", err);
+      res.redirect(`/authors/${author.id}`);
+    }
   }
 });
 
