@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="760" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#444"/>
+    </marker>
+    <style>
+      .box { rx:10; ry:10; stroke-width:2; }
+      .title { font-size:16px; font-weight:bold; }
+      .sub { font-size:12px; fill:#333; }
+      .code { font-family:Consolas, monospace; font-size:11px; fill:#0a3; }
+      .file { font-family:Consolas, monospace; font-size:11px; fill:#06c; }
+      .lbl { font-size:12px; fill:#444; font-style:italic; }
+      .step { font-size:13px; font-weight:bold; fill:#fff; }
+    </style>
+  </defs>
+
+  <text x="550" y="34" text-anchor="middle" font-size="22" font-weight="bold">Cover-Bild Upload &amp; Storage Workflow</text>
+  <text x="550" y="56" text-anchor="middle" font-size="13" fill="#888">Bilder werden NICHT auf der Festplatte gespeichert, sondern als Buffer in MongoDB</text>
+
+  <!-- 1 Browser / FilePond -->
+  <rect x="40" y="90" width="300" height="120" class="box" fill="#eaf4ff" stroke="#3b82f6"/>
+  <circle cx="62" cy="112" r="12" fill="#3b82f6"/><text x="62" y="117" text-anchor="middle" class="step">1</text>
+  <text x="84" y="117" class="title">Browser (FilePond)</text>
+  <text x="56" y="142" class="sub">User wählt Bild im &lt;input type="file"&gt;</text>
+  <text x="56" y="160" class="file">views/books/_form_fields.ejs:25</text>
+  <text x="56" y="180" class="sub">FilePond + file-encode Plugin wandelt</text>
+  <text x="56" y="196" class="sub">das Bild in Base64-JSON um</text>
+
+  <!-- 2 fileUploads.js -->
+  <rect x="40" y="250" width="300" height="110" class="box" fill="#eaf4ff" stroke="#3b82f6"/>
+  <circle cx="62" cy="272" r="12" fill="#3b82f6"/><text x="62" y="277" text-anchor="middle" class="step">2</text>
+  <text x="84" y="277" class="title">Plugin-Konfiguration</text>
+  <text x="56" y="302" class="file">public/javascripts/fileUploads.js</text>
+  <text x="56" y="322" class="code">FilePond.registerPlugin(...)</text>
+  <text x="56" y="340" class="code">FilePond.parse(document.body)</text>
+
+  <!-- arrow 1->2 -->
+  <line x1="190" y1="210" x2="190" y2="248" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- POST arrow to server -->
+  <line x1="340" y1="305" x2="410" y2="305" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="375" y="296" text-anchor="middle" class="lbl">POST /books</text>
+  <text x="375" y="322" text-anchor="middle" class="lbl">field: cover</text>
+
+  <!-- 3 Express route -->
+  <rect x="410" y="250" width="320" height="180" class="box" fill="#fff4e6" stroke="#f59e0b"/>
+  <circle cx="432" cy="272" r="12" fill="#f59e0b"/><text x="432" y="277" text-anchor="middle" class="step">3</text>
+  <text x="454" y="277" class="title">Express Route</text>
+  <text x="426" y="300" class="file">routes/books.js  router.post("/")</text>
+  <text x="426" y="322" class="sub">Erstellt neues Book-Objekt aus req.body</text>
+  <text x="426" y="344" class="sub">und ruft saveCover(book, req.body.cover):</text>
+  <text x="426" y="366" class="code">const cover = JSON.parse(coverEncoded)</text>
+  <text x="426" y="384" class="code">book.coverImage =</text>
+  <text x="426" y="400" class="code">   Buffer.from(cover.data, "base64")</text>
+  <text x="426" y="418" class="code">book.coverImageType = cover.type</text>
+
+  <!-- 4 Model -->
+  <rect x="410" y="470" width="320" height="150" class="box" fill="#f3e8ff" stroke="#a855f7"/>
+  <circle cx="432" cy="492" r="12" fill="#a855f7"/><text x="432" y="497" text-anchor="middle" class="step">4</text>
+  <text x="454" y="497" class="title">Mongoose Model</text>
+  <text x="426" y="520" class="file">models/book.js</text>
+  <text x="426" y="542" class="code">coverImage:     { type: Buffer }</text>
+  <text x="426" y="560" class="code">coverImageType: { type: String }</text>
+  <text x="426" y="584" class="sub">Validierung der MIME-Typen</text>
+  <text x="426" y="602" class="sub">(jpeg / png / gif) vor dem Speichern</text>
+
+  <!-- arrow 3->4 -->
+  <line x1="570" y1="430" x2="570" y2="468" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="575" y="455" class="lbl">book.save()</text>
+
+  <!-- 5 MongoDB -->
+  <rect x="800" y="470" width="260" height="150" class="box" fill="#e8fff0" stroke="#10b981"/>
+  <circle cx="822" cy="492" r="12" fill="#10b981"/><text x="822" y="497" text-anchor="middle" class="step">5</text>
+  <text x="844" y="497" class="title">MongoDB</text>
+  <text x="816" y="522" class="sub">Speichert das Bild als BinData</text>
+  <text x="816" y="540" class="sub">direkt im Book-Dokument</text>
+  <text x="816" y="566" class="code">{ coverImage: BinData(...),</text>
+  <text x="816" y="584" class="code">  coverImageType: "image/png" }</text>
+  <text x="816" y="606" class="lbl">Keine Datei auf Disk!</text>
+
+  <!-- arrow 4->5 -->
+  <line x1="730" y1="545" x2="798" y2="545" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 6 Display -->
+  <rect x="760" y="90" width="300" height="200" class="box" fill="#eaf4ff" stroke="#3b82f6"/>
+  <circle cx="782" cy="112" r="12" fill="#3b82f6"/><text x="782" y="117" text-anchor="middle" class="step">6</text>
+  <text x="804" y="117" class="title">Anzeige im Browser</text>
+  <text x="776" y="142" class="file">models/book.js  virtual()</text>
+  <text x="776" y="162" class="sub">coverImagePath baut eine Data-URI:</text>
+  <text x="776" y="182" class="code">data:image/png;base64,...</text>
+  <text x="776" y="206" class="file">views/books/show.ejs:2</text>
+  <text x="776" y="226" class="file">views/books/index.ejs:20</text>
+  <text x="776" y="248" class="code">&lt;img src="&lt;%= book.coverImagePath %&gt;"&gt;</text>
+  <text x="776" y="272" class="sub">Browser dekodiert Base64 &#8594; Bild</text>
+
+  <!-- arrow 5->6 (read) -->
+  <path d="M930 468 C930 360, 930 330, 930 292" fill="none" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="985" y="380" text-anchor="middle" class="lbl">findById()</text>
+  <text x="985" y="396" text-anchor="middle" class="lbl">.populate()</text>
+
+  <text x="550" y="700" text-anchor="middle" font-size="12" fill="#888">server.js: bodyParser limit '10mb' &#8212; begrenzt die maximale Upload-Gr&#246;&#223;e</text>
+</svg>
