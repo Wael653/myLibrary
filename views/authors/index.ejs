@@ -1,4 +1,4 @@
-<h2>Search Authors</h2>
+<h2 class="page-header">Search Authors</h2>
 <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
     <p class="error"><%= errorMessage %></p>
 <% } %>
@@ -12,7 +12,9 @@
     <div>
         <h3><%= author.name %></h3>
     </div>
-    <a href="/authors/<%= author.id %>">View</a>
-    <a href="/authors/<%= author.id %>/edit">Edit</a>
-    <%- include('../partials/deleteForm', { url: `/authors/${author.id}` }) %>
-<% }); %>       
+    <div class="btn-row">
+        <a class="btn btn-primary" href="/authors/<%= author.id %>">View</a>
+        <a class="btn btn-primary" href="/authors/<%= author.id %>/edit">Edit</a>
+        <%- include('../partials/deleteForm', { url: `/authors/${author.id}` }) %>
+    </div>
+<% }); %>

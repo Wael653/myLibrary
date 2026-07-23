@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git log:*)",
+      "Bash(echo:*)",
+      "Bash(git ls-files:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
