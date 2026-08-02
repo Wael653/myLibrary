@@ -3,9 +3,15 @@
     <p class="error"><%= errorMessage %></p>
 <% } %>
 <form action="/authors" method="GET">
-    <label>Name</label>
-    <input type="text" name="name" placeholder="Author Name" value="<%= searchOptions.name %>">
-    <button type="submit">Search</button>
+    <div class="form-row">
+        <div class="form-item">
+            <label>Name</label>
+            <input type="text" name="name" placeholder="Author Name" value="<%= searchOptions.name %>">
+        </div>
+    </div>
+    <div class="form-row form-row-end">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
 </form>
 <br>
 <% authors.forEach(author => { %>
