@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------
+# CI/CD-Pipeline fuer "Library Project" (Express + EJS + MongoDB)
+#
+# Wichtig: GitLab Pages liefert nur STATISCHE Dateien aus - dort laeuft kein
+# Node.js-Server und keine MongoDB. Diese Pipeline startet die App deshalb
+# waehrend des Builds im CI-Container (inklusive MongoDB-Service-Container),
+# ruft alle erreichbaren Seiten ab und speichert sie als fertiges HTML im
+# Ordner "public/". Genau dieser Ordner wird von GitLab Pages veroeffentlicht.
+# ---------------------------------------------------------------------------
+
+stages:
+  - test
+  - deploy
+
+default:
+  image: node:20
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  # Verbindung zum MongoDB-Service-Container (nur waehrend des Builds)
+  DATABASE_URL: "mongodb://mongo:27017/library"
+  PORT: "3000"
+  APP_URL: "http://127.0.0.1:3000"
+
+# 1) CI - Abhaengigkeiten installieren und Syntax pruefen
+test:
+  stage: test
+  script:
+    - npm ci --no-audit --no-fund
+    - node --check server.js
+    - for f in routes/*.js models/*.js public/javascripts/*.js; do node --check "$f"; done
+
+# 2) CD - statischen Snapshot bauen und auf GitLab Pages veroeffentlichen
+pages:
+  stage: deploy
+  services:
+    - name: mongo:7
+      alias: mongo
+  script:
+    - npm ci --no-audit --no-fund
+    - command -v wget > /dev/null || (apt-get update -qq && apt-get install -y -qq wget)
+    # App im Hintergrund starten
+    - node server.js > server.log 2>&1 &
+    # warten, bis der Server antwortet
+    - |
+      for i in $(seq 1 30); do
+        wget -q --spider "$APP_URL/" && break
+        echo "warte auf den Server ... ($i)"
+        sleep 2
+      done
+    - wget -q --spider "$APP_URL/" || { echo "Server nicht erreichbar:"; cat server.log; exit 1; }
+    # alle verlinkten Seiten als statisches HTML spiegeln
+    - |
+      wget --mirror --page-requisites --adjust-extension --convert-links \
+           --no-parent --no-host-directories --no-verbose \
+           --directory-prefix=_site \
+           --reject-regex '.*_method=.*' \
+           "$APP_URL/" || true
+    - test -f _site/index.html
+    # Assets (CSS, Fonts, JS) sicherheitshalber ergaenzen, ohne zu ueberschreiben
+    - cp -rn public/. _site/ || true
+    # Ergebnis nach public/ verschieben - dieser Ordner wird veroeffentlicht
+    - rm -rf public
+    - mv _site public
+    - ls -la public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
