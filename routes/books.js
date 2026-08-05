@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Book = require("../models/book");
 const Author = require("../models/author");
-const imageMimeTypes = ["image/jpeg", "image/png", "images/gif"];
+const imageMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
 /* GET books listing. */
 router.get("/", async (req, res) => {
@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     const books = await query.exec();
     res.render("books/index", { books: books, searchOptions: req.query });
   } catch (error) {
-    console.error("dswwwwwwww");
+    console.error("GET /books error:", error);
     res.redirect("/");
   }
 });
@@ -35,7 +35,8 @@ router.get("/:id/edit", async (req, res) => {
   try {
   const book = await Book.findById(req.params.id);
   renderEditPage(res, book)
-  } catch {
+  } catch (error) {
+    console.error("GET /books/:id/edit error:", error);
     res.redirect("/books");
   }
 
@@ -65,12 +66,13 @@ router.post("/", async (req, res) => {
     pageCount: req.body.pageCount,
     description: req.body.description,
   });
-  saveCover(book, req.body.cover);
   try {
+    saveCover(book, req.body.cover);
     const newBook = await book.save();
     res.redirect(`books/${newBook.id}`);
   //  res.redirect("/books");
-  } catch {
+  } catch (error) {
+    console.error("POST /books error:", error);
     renderNewPage(res, book, true);
   }
 });
@@ -89,7 +91,8 @@ router.put("/:id", async (req, res) => {
     }
     await book.save();
     res.redirect(`/books/${book.id}`);
-  } catch {
+  } catch (error) {
+    console.error("PUT /books/:id error:", error);
     if (book != null) {
       renderEditPage(res, book, true);
     } else {
@@ -144,6 +147,7 @@ async function renderFormPage(res, book, form, hasError = false) {
     }
     res.render(`books/${form}`, params);
   } catch (error) {
+    console.error(`renderFormPage (${form}) error:`, error);
     res.redirect("/books");
   }
 }
