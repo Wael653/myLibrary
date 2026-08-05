@@ -1,0 +1,11 @@
+{
+  // Prettier kann kein EJS; die EJS-Extension bringt keinen Formatter mit.
+  // Darum .ejs als HTML behandeln, damit der eingebaute HTML-Formatter greift.
+  "files.associations": {
+    "*.ejs": "html"
+  },
+  "html.format.templating": true,
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
+}
