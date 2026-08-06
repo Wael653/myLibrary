@@ -2,6 +2,9 @@
   --nav-title-font-size: 3rem;
   --nav-title-font-weight: bold;
   --nav-link-font-weight: 300;
+  --nav-breakpoint: 768px;
+  --nav-sidebar-width: min(80vw, 15rem);
+  --nav-transition-duration: 300ms;
 }
 
 .header-title {
@@ -40,3 +43,156 @@
   color: white;
 }
 
+/* Hamburger button — only visible below the breakpoint */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 1.75rem;
+  height: 1.25rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.nav-toggle-bar {
+  display: block;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background-color: var(--color-text-light);
+  transition: background-color var(--nav-transition-duration) ease;
+}
+
+.nav-toggle:hover .nav-toggle-bar {
+  background-color: white;
+}
+
+/* Sidebar — slides in from the right, i.e. it is pulled to the left */
+.nav-sidebar {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 20;
+  width: var(--nav-sidebar-width);
+  height: 100%;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background: linear-gradient(to right, var(--color-background-dark), var(--color-background-light));
+  border-left: 1px solid var(--color-background-light);
+  box-shadow: -0.5rem 0 1.5rem hsl(var(--color-base-hue), 100%, 4%, 0.5);
+  transform: translateX(100%);
+  /* visibility keeps the closed sidebar out of the tab order and off screen readers */
+  visibility: hidden;
+  transition: transform var(--nav-transition-duration) ease,
+              visibility var(--nav-transition-duration) ease;
+}
+
+.nav-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.nav-sidebar-title {
+  font-size: 1.75rem;
+}
+
+.nav-close {
+  border: none;
+  background: none;
+  color: var(--color-text-light);
+  font-family: inherit;
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  cursor: pointer;
+}
+
+.nav-close:hover {
+  color: white;
+}
+
+.nav-sidebar-links {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-sidebar-links li {
+  list-style: none;
+}
+
+.nav-sidebar-links li a {
+  display: block;
+  padding: 0.75rem 0;
+  color: var(--color-text-light);
+  font-weight: var(--nav-link-font-weight);
+  text-decoration: none;
+}
+
+.nav-sidebar-links li a:hover {
+  color: white;
+}
+
+/* Backdrop — a click anywhere outside the sidebar closes it */
+.nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background-color: hsl(var(--color-base-hue), 100%, 4%, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--nav-transition-duration) ease,
+              visibility var(--nav-transition-duration) ease;
+}
+
+@media (max-width: 768px) {
+  .header-title {
+    font-size: 2rem;
+  }
+
+  .header-nav > ul {
+    display: none;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-sidebar,
+  .nav-overlay {
+    display: block;
+  }
+
+  .nav-sidebar-links {
+    display: flex;
+  }
+
+  .nav-open .nav-sidebar {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .nav-open .nav-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Keep the page behind the sidebar from scrolling while it is open */
+  .nav-open {
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-sidebar,
+  .nav-overlay {
+    transition: none;
+  }
+}
