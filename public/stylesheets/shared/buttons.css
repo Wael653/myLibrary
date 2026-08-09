@@ -19,20 +19,12 @@
   cursor: pointer;
   text-decoration: none;
   text-align: center;
+  flex-shrink: 1;
 }
 
-.btn-row {
-  display: flex;
-  align-items: flex-start;
-}
+.btn-row { display: flex; align-items: flex-start; gap: .5rem 1rem; flex-wrap: wrap}
+.btn-row > *, .btn-row > *:first-child { margin-left: 0; }
 
-.btn-row > * {
-  margin-left: 1rem;
-}
-
-.btn-row > *:first-child {
-  margin-left: 0;
-}
 
 .btn-primary {
   color: var(--color-btn-primary-text);
